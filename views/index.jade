@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+  p Hello
+  p #{title}
+  p #{title}
+  img(src='images/bear.jpg')
+  a(href='/layout/getLayout') 111111
+  button(id='layoutButton', width='100px', height='30px') 点击
+
+  script(src='javascripts/layoutButton.js')

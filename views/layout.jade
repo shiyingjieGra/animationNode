@@ -1,0 +1,11 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    block content
+      h1 #{title}
+      p 这是一个内部标签，下面会有个熊
+      img(src='images/bear.jpg', class='bear')
+
