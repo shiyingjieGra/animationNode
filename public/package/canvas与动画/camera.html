@@ -1,0 +1,271 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .container {
+        display: flex;
+      }
+      .canvas-container {
+        flex: 0;
+      }
+      .canvas {
+        width: 400px;
+        height: 400px;
+      }
+      .operation-container {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body onload="init()">
+    <div class="container">
+      <div class="canvas-container">
+        <canvas id="mainCanvas" class="canvas"></canvas>
+      </div>
+      <div class="operation-container">
+        <div>
+          切换照相机
+          <select id="changeCameraSelect" onchange="changeCamera()">
+            <option value="1">透视投影照相机</option>
+            <option value="2">正交投影照相机</option>
+          </select>
+        </div>
+        <div>
+          正方体旋转
+          <button onclick="spin()">旋转</button>
+          <button onclick="stopSpin()">停止旋转</button>
+        </div>
+        <div>
+          切换光源
+          <select id="light" onchange="changeLight()">
+            <option value="point">点光源</option>
+            <option value="env">环境光</option>
+            <option value="directiona">平行光</option>
+          </select>
+        </div>
+        <div>
+          材质
+          <select id="material" onchange="changeMaterial()">
+            <option value="0">基础材质</option>
+            <option value="1" selected>lambert材质</option>
+            <option value="2">phong材质</option>
+            <option value="3">法相材质</option>
+            <option value="4">纹理贴图</option>
+          </select>
+          <div id="imageChange" style="display: none">
+            上传贴图文件
+            <input
+              type="file"
+              accept="image/*"
+              onchange="changeImage(this)"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="three.js"></script>
+    <script
+      type="text/javascript"
+      src="../../stats.js-master/build/stats.min.js"
+    ></script>
+    <script>
+      let box;
+      let light;
+      let camera = null;
+      let renderer = null;
+      let scene = null;
+      let animationId = null;
+      let materialList = [];
+      let panel = null;
+      var stats
+      var material = new THREE.MeshLambertMaterial({
+        clipShadows: false,
+        color: 0xf47920,
+      });
+      let greenMaterial = new THREE.MeshLambertMaterial({
+        clipShadows: false,
+        color: 0xb2d235,
+      });
+      function init() {
+        initMaterial();
+        initCanvas();
+      }
+      // 初始化canvas和摄像机
+      function initCanvas() {
+        // 初始化渲染器
+        if (!renderer) {
+          renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById("mainCanvas"),
+          });
+          renderer.setClearColor(0xb7ba6b); // black
+        }
+        renderer.shadowMapEnabled = true;
+        initStats()
+
+        // 初始化场景
+        if (!scene) {
+          // scene
+          scene = new THREE.Scene();
+        }
+
+        // 初始化摄像机
+        if (!camera) {
+          // camera
+          camera = new THREE.PerspectiveCamera(
+            Number(60),
+            Number(400 / 400),
+            Number(1),
+            Number(100)
+          );
+        }
+
+        camera.position.set(8, 8, 8);
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+        scene.add(camera);
+        createBox(material);
+        panel = createPlane();
+        scene.add(panel);
+
+        light = createLight();
+        scene.add(light);
+
+        renderer.render(scene, camera);
+      }
+      function spin() {
+        box.rotateY(Math.PI / 360);
+        panel.rotateZ(Math.PI / 360);
+        renderer.render(scene, camera);
+        stats.update();
+        animationId = requestAnimationFrame(spin);
+      }
+      function stopSpin() {
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+          animationId = null;
+        }
+      }
+      async function initMaterial() {
+        // 基础材质
+        var baseMaterial = new THREE.MeshBasicMaterial({
+          color: 0xffff00,
+          opacity: 0.75,
+        });
+        // lambert材质
+        var lambertMaterial = new THREE.MeshLambertMaterial({
+          color: 0xffff00,
+        });
+        // phong材质
+        var phongMaterial = new THREE.MeshPhongMaterial({
+          color: 0xffff00,
+          specular: 0xffff00,
+          shininess: 1000,
+        });
+        // 法向材质
+        var normalMaterial = new THREE.MeshNormalMaterial();
+        // 纹理贴图
+        var texture = await THREE.ImageUtils.loadTexture("./resource/zero.png");
+        // // texture.setCrossOrigin( "Anonymous" );
+        var importMaterial = new THREE.MeshLambertMaterial({
+          map: texture,
+        });
+        materialList = [
+          baseMaterial,
+          lambertMaterial,
+          phongMaterial,
+          normalMaterial,
+          importMaterial,
+        ];
+      }
+      function changeMaterial() {
+        var materialSelect = document.getElementById("material");
+        var imageChange = document.getElementById("imageChange");
+
+        if (materialSelect.value === "4") {
+          imageChange.style.display = "inline-block";
+          return false;
+        } else {
+          imageChange.style.display = "none";
+        }
+        var material = materialList[Number(materialSelect.value)];
+        createBox(material);
+        renderer.render(scene, camera);
+      }
+      // 创建一个盒子，盒子设置散射光
+      function createBox(boxMaterial) {
+        scene.remove(box);
+        box = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 3), boxMaterial);
+        box.castShadow = true;
+        scene.add(box);
+      }
+      function createPlane() {
+        panel = new THREE.Mesh(new THREE.PlaneGeometry(20, 20), greenMaterial);
+        panel.rotateX(-Math.PI / 2);
+        // panel.translateZ(1.6);
+        panel.translateZ(-2);
+        panel.receiveShadow = true;
+        return panel;
+      }
+      function initStats() {
+        stats = new Stats()
+        stats.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
+        stats.domElement.style.position = 'absolute'
+        stats.domElement.style.left = '10px'
+        stats.domElement.style.top = '10px'
+        document.body.appendChild(stats.dom)
+      }
+      // 加一个点光源
+      function createLight() {
+        light = new THREE.PointLight(0xffffff, 2, 100);
+        light.position.set(10, 10, -10);
+        light.castShadow = true;
+        return light;
+      }
+      function changeCamera() {
+        var cameraSelect = document.getElementById("changeCameraSelect");
+        // 正交投影
+        if (cameraSelect.value === "1") {
+          camera = new THREE.PerspectiveCamera(60, 400 / 400, 1, 100);
+          camera.position.set(5, 5, 5);
+          camera.lookAt(new THREE.Vector3(0, 0, 0));
+        } else {
+          camera = new THREE.OrthographicCamera(-5, 5, 5, -5, 1, 10);
+          camera.position.set(5, 5, 5);
+          camera.lookAt(new THREE.Vector3(0, 0, 0));
+        }
+        renderer.render(scene, camera);
+      }
+      function changeLight() {
+        var lightSelect = document.getElementById("light");
+        scene.remove(light);
+        switch (lightSelect.value) {
+          case "point":
+            light = new THREE.PointLight(0xffffff, 1.5, 100);
+            break;
+          case "env":
+            light = new THREE.AmbientLight(0x404040, 2);
+            break;
+          case "directiona":
+            light = new THREE.DirectionalLight(0xffffff, 1.5);
+            break;
+          default:
+            break;
+        }
+        light.castShadow = true;
+        light.position.set(10, 10, -10);
+        scene.add(light);
+        renderer.render(scene, camera);
+      }
+      async function changeImage(target) {
+        console.log(target.files[0]);
+        var url = window.URL.createObjectURL(target.files[0]);
+        console.log(url);
+        var texture = await THREE.ImageUtils.loadTexture(url);
+        var importMaterial = new THREE.MeshLambertMaterial({
+          map: texture,
+        });
+        createBox(importMaterial);
+        renderer.render(scene, camera);
+      }
+    </script>
+  </body>
+</html>

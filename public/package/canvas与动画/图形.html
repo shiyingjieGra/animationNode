@@ -1,0 +1,233 @@
+<!DOCTYPE >
+<html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+
+  <body onload="change()" style="display: flex">
+    <canvas
+      id="mainCanvas"
+      width="400px"
+      height="400px"
+      style="flex: 0; height: 400px; width: 400px"
+    ></canvas>
+    <div style="flex: 1">
+      cameraPosition:
+      <hr />
+      X:<input
+        class="camera"
+        id="x"
+        type="number"
+        value="5"
+        onchange="change()"
+      />
+      y:<input
+        class="camera"
+        id="y"
+        type="number"
+        value="5"
+        onchange="change()"
+      />
+      z:<input
+        class="camera"
+        id="z"
+        type="number"
+        value="5"
+        onchange="change()"
+      /><br />
+      Graphical:
+      <hr />
+      <select id="GraphicalSelect" onchange="change()">
+        <option value="cube" selected="selected">正方体</option>
+        <option value="plane">长方形</option>
+        <option value="goble">球</option>
+        <option value="circle">扇形</option>
+        <option value="toru">圆环</option>
+        <option value="torus">圆环结</option>
+      </select>
+      <hr />
+      <button onclick="changeDistance('appear')">距离拉近</button>
+      <button onclick="changeDistance('far')">距离拉远</button>
+      <button onclick="spin()">旋转</button>
+      <button onclick="stopSpin()">停止旋转</button>
+    </div>
+    <script type="text/javascript" src="three.js"></script>
+    <script
+      type="text/javascript"
+      src="../../stats.js-master/build/stats.min.js"
+    ></script>
+
+    <script type="text/javascript">
+      var Pattern
+      var camera
+      var scene
+      var renderer
+      var sinxD
+      var cosxD
+      var setIntervalId = null
+      var position = 0
+      var isSpin = false
+      var stats
+      function initStats() {
+        stats = new Stats()
+        stats.showPanel(0) // 0: fps, 1: ms, 2: mb, 3+: custom
+        stats.domElement.style.position = 'absolute'
+        stats.domElement.style.left = '10px'
+        stats.domElement.style.top = '10px'
+        document.body.appendChild(stats.dom)
+      }
+      function changeDistance(type) {
+        var x = document.getElementById('x')
+        var y = document.getElementById('y')
+        var z = document.getElementById('z')
+        if (type === 'appear') {
+          x.value = parseInt(x.value, 10) - 2
+          y.value = parseInt(y.value, 10) - 2
+          z.value = parseInt(z.value, 10) - 2
+        } else {
+          x.value = parseInt(x.value, 10) + 2
+          y.value = parseInt(y.value, 10) + 2
+          z.value = parseInt(z.value, 10) + 2
+        }
+        if (isSpin) {
+          stopSpin()
+          camera.lookAt(new THREE.Vector3(0, 0, 0))
+          camera.position.set(x.value, y.value, z.value)
+          renderer.render(scene, camera)
+          spin()
+        } else {
+          camera.lookAt(new THREE.Vector3(0, 0, 0))
+          camera.position.set(x.value, y.value, z.value)
+          renderer.render(scene, camera)
+        }
+      }
+      function spin() {
+        if (!setIntervalId) {
+          isSpin = true
+          setIntervalId = setInterval(() => {
+            position += (Math.PI * 1) / 360
+            var x = document.getElementById('x')
+            var y = document.getElementById('y')
+            var z = document.getElementById('z')
+            var radiusDouble = Number(x.value) ** 2 + Number(z.value) ** 2
+            // 默认环绕半径100的圆旋转，x位置为sinx，y位置为cosx
+            x.value = Math.sin(position) * radiusDouble ** 0.5
+            z.value = Math.cos(position) * radiusDouble ** 0.5
+            y.value = parseInt(y.value, 10)
+            camera.lookAt(new THREE.Vector3(0, 0, 0))
+
+            camera.position.set(x.value, y.value, z.value)
+            renderer.render(scene, camera)
+            stats.update()
+          }, 100)
+        }
+      }
+      function stopSpin() {
+        isSpin = false
+        clearInterval(setIntervalId)
+        setIntervalId = null
+      }
+      function init(x, y, z, graphical) {
+        // renderer
+        if (!renderer) {
+          renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById('mainCanvas'),
+          })
+          renderer.setClearColor(0x000000) // black
+        }
+
+        initStats()
+
+        if (!scene) {
+          // scene
+          scene = new THREE.Scene()
+        }
+        console.log(scene)
+
+        if (!camera) {
+          // camera
+          camera = new THREE.PerspectiveCamera(
+            Number(45),
+            Number(400 / 400),
+            Number(1),
+            Number(100)
+          )
+        }
+
+        camera.position.set(x, y, z)
+        camera.lookAt(new THREE.Vector3(0, 0, 0))
+        scene.add(camera)
+        scene.clear()
+        var Pattern2 = select(graphical)
+        scene.add(Pattern2)
+        renderer.render(scene, camera)
+      }
+      function select(selected) {
+        if (selected == 'cube') {
+          Pattern = new THREE.Mesh(
+            new THREE.BoxGeometry(2, 2, 2, 2, 2, 2),
+            new THREE.MeshBasicMaterial({
+              color: 0xff0000,
+              wireframe: true,
+            })
+          )
+        }
+        if (selected == 'plane') {
+          Pattern = new THREE.Mesh(
+            new THREE.BoxGeometry(2, 2),
+            new THREE.MeshBasicMaterial({
+              color: 0xffffff,
+              wireframe: true,
+            })
+          )
+        }
+        if (selected == 'goble') {
+          Pattern = new THREE.Mesh(
+            new THREE.SphereGeometry(2, 18, 12),
+            new THREE.MeshBasicMaterial({
+              color: 0xff0000,
+              wireframe: true,
+            })
+          )
+        }
+        if (selected == 'circle') {
+          Pattern = new THREE.Mesh(
+            new THREE.CircleGeometry(2, 18, Math.PI / 3, (Math.PI / 3) * 4),
+            new THREE.MeshBasicMaterial({
+              color: 0xffffff,
+              wireframe: true,
+            })
+          )
+        }
+        if (selected == 'toru') {
+          Pattern = new THREE.Mesh(
+            new THREE.TorusGeometry(1, 0.5, 4, 8),
+            new THREE.MeshBasicMaterial({
+              color: 0xffffff,
+              wireframe: true,
+            })
+          )
+        }
+        if (selected == 'torus') {
+          Pattern = new THREE.Mesh(
+            new THREE.TorusKnotGeometry(1.5, 0.5, 32, 8),
+            new THREE.MeshBasicMaterial({
+              color: 0xffffff,
+              wireframe: true,
+            })
+          )
+        }
+        return Pattern
+      }
+      function change() {
+        var x = document.getElementById('x').value
+        var y = document.getElementById('y').value
+        var z = document.getElementById('z').value
+        var myselect = document.getElementById('GraphicalSelect')
+        var index = myselect.selectedIndex
+        var graphical = myselect.options[index].value
+        init(x, y, z, graphical)
+      }
+    </script>
+  </body>
+</html>

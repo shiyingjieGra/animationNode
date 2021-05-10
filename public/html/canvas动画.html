@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width initial-scale=1" />
+    <title>canvas动画</title>
+    <title>canvas动画</title>
+    <link
+      href="https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <style type="text/css">
+      html {
+        overflow-x: initial !important;
+      }
+      :root {
+        --bg-color: #ffffff;
+        --text-color: #333333;
+        --select-text-bg-color: #b5d6fc;
+        --select-text-font-color: auto;
+        --monospace: 'Lucida Console', Consolas, 'Courier', monospace;
+        --title-bar-height: 20px;
+      }
+      .mac-os-11 {
+        --title-bar-height: 28px;
+      }
+      html {
+        font-size: 14px;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      body {
+        margin: 0px;
+        padding: 0px;
+        height: auto;
+        bottom: 0px;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        font-size: 1rem;
+        line-height: 1.42857;
+        overflow-x: hidden;
+        background: inherit;
+        tab-size: 4;
+      }
+      iframe {
+        margin: auto;
+      }
+      a.url {
+        word-break: break-all;
+      }
+      a:active,
+      a:hover {
+        outline: 0px;
+      }
+      .in-text-selection,
+      ::selection {
+        text-shadow: none;
+        background: var(--select-text-bg-color);
+        color: var(--select-text-font-color);
+      }
+      #write {
+        margin: 0px auto;
+        height: auto;
+        width: inherit;
+        word-break: normal;
+        overflow-wrap: break-word;
+        position: relative;
+        white-space: normal;
+        overflow-x: visible;
+        padding-top: 36px;
+      }
+      #write.first-line-indent p {
+        text-indent: 2em;
+      }
+      #write.first-line-indent li p,
+      #write.first-line-indent p * {
+        text-indent: 0px;
+      }
+      #write.first-line-indent li {
+        margin-left: 2em;
+      }
+      .for-image #write {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+      body.typora-export {
+        padding-left: 30px;
+        padding-right: 30px;
+      }
+      .typora-export .footnote-line,
+      .typora-export li,
+      .typora-export p {
+        white-space: pre-wrap;
+      }
+      .typora-export .task-list-item input {
+        pointer-events: none;
+      }
+      @media screen and (max-width: 500px) {
+        body.typora-export {
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+        #write {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+        .CodeMirror-sizer {
+          margin-left: 0px !important;
+        }
+        .CodeMirror-gutters {
+          display: none !important;
+        }
+      }
+      #write li > figure:last-child {
+        margin-bottom: 0.5rem;
+      }
+      #write ol,
+      #write ul {
+        position: relative;
+      }
+      img {
+        max-width: 100%;
+        vertical-align: middle;
+        image-orientation: from-image;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        color: inherit;
+        font: inherit;
+      }
+      input[type='checkbox'],
+      input[type='radio'] {
+        line-height: normal;
+        padding: 0px;
+      }
+      *,
+      ::after,
+      ::before {
+        box-sizing: border-box;
+      }
+      #write h1,
+      #write h2,
+      #write h3,
+      #write h4,
+      #write h5,
+      #write h6,
+      #write p,
+      #write pre {
+        width: inherit;
+      }
+      #write h1,
+      #write h2,
+      #write h3,
+      #write h4,
+      #write h5,
+      #write h6,
+      #write p {
+        position: relative;
+      }
+      p {
+        line-height: inherit;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        break-after: avoid-page;
+        break-inside: avoid;
+        orphans: 4;
+      }
+      p {
+        orphans: 4;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      h2 {
+        font-size: 1.8rem;
+      }
+      h3 {
+        font-size: 1.6rem;
+      }
+      h4 {
+        font-size: 1.4rem;
+      }
+      h5 {
+        font-size: 1.2rem;
+      }
+      h6 {
+        font-size: 1rem;
+      }
+      .md-math-block,
+      .md-rawblock,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      p {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+      }
+      .hidden {
+        display: none;
+      }
+      .md-blockmeta {
+        color: rgb(204, 204, 204);
+        font-weight: 700;
+        font-style: italic;
+      }
+      a {
+        cursor: pointer;
+      }
+      sup.md-footnote {
+        padding: 2px 4px;
+        background-color: rgba(238, 238, 238, 0.7);
+        color: rgb(85, 85, 85);
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      sup.md-footnote a,
+      sup.md-footnote a:hover {
+        color: inherit;
+        text-transform: inherit;
+        text-decoration: inherit;
+      }
+      #write input[type='checkbox'] {
+        cursor: pointer;
+        width: inherit;
+        height: inherit;
+      }
+      figure {
+        overflow-x: auto;
+        margin: 1.2em 0px;
+        max-width: calc(100% + 16px);
+        padding: 0px;
+      }
+      figure > table {
+        margin: 0px;
+      }
+      tr {
+        break-inside: avoid;
+        break-after: auto;
+      }
+      thead {
+        display: table-header-group;
+      }
+      table {
+        border-collapse: collapse;
+        border-spacing: 0px;
+        width: 100%;
+        overflow: auto;
+        break-inside: auto;
+        text-align: left;
+      }
+      table.md-table td {
+        min-width: 32px;
+      }
+      .CodeMirror-gutters {
+        border-right: 0px;
+        background-color: inherit;
+      }
+      .CodeMirror-linenumber {
+        user-select: none;
+      }
+      .CodeMirror {
+        text-align: left;
+      }
+      .CodeMirror-placeholder {
+        opacity: 0.3;
+      }
+      .CodeMirror pre {
+        padding: 0px 4px;
+      }
+      .CodeMirror-lines {
+        padding: 0px;
+      }
+      div.hr:focus {
+        cursor: none;
+      }
+      #write pre {
+        white-space: pre-wrap;
+      }
+      #write.fences-no-line-wrapping pre {
+        white-space: pre;
+      }
+      #write pre.ty-contain-cm {
+        white-space: normal;
+      }
+      .CodeMirror-gutters {
+        margin-right: 4px;
+      }
+      .md-fences {
+        font-size: 0.9rem;
+        display: block;
+        break-inside: avoid;
+        text-align: left;
+        overflow: visible;
+        white-space: pre;
+        background: inherit;
+        position: relative !important;
+      }
+      .md-fences-adv-panel {
+        width: 100%;
+        margin-top: 10px;
+        text-align: center;
+        padding-top: 0px;
+        padding-bottom: 8px;
+        overflow-x: auto;
+      }
+      #write .md-fences.mock-cm {
+        white-space: pre-wrap;
+      }
+      .md-fences.md-fences-with-lineno {
+        padding-left: 0px;
+      }
+      #write.fences-no-line-wrapping .md-fences.mock-cm {
+        white-space: pre;
+        overflow-x: auto;
+      }
+      .md-fences.mock-cm.md-fences-with-lineno {
+        padding-left: 8px;
+      }
+      .CodeMirror-line,
+      twitterwidget {
+        break-inside: avoid;
+      }
+      .footnotes {
+        opacity: 0.8;
+        font-size: 0.9rem;
+        margin-top: 1em;
+        margin-bottom: 1em;
+      }
+      .footnotes + .footnotes {
+        margin-top: 0px;
+      }
+      .md-reset {
+        margin: 0px;
+        padding: 0px;
+        border: 0px;
+        outline: 0px;
+        vertical-align: top;
+        background: 0px 0px;
+        text-decoration: none;
+        text-shadow: none;
+        float: none;
+        position: static;
+        width: auto;
+        height: auto;
+        white-space: nowrap;
+        cursor: inherit;
+        -webkit-tap-highlight-color: transparent;
+        line-height: normal;
+        font-weight: 400;
+        text-align: left;
+        box-sizing: content-box;
+        direction: ltr;
+      }
+      li div {
+        padding-top: 0px;
+      }
+      blockquote {
+        margin: 1rem 0px;
+      }
+      li .mathjax-block,
+      li p {
+        margin: 0.5rem 0px;
+      }
+      li blockquote {
+        margin: 1rem 0px;
+      }
+      li {
+        margin: 0px;
+        position: relative;
+      }
+      blockquote > :last-child {
+        margin-bottom: 0px;
+      }
+      blockquote > :first-child,
+      li > :first-child {
+        margin-top: 0px;
+      }
+      .footnotes-area {
+        color: rgb(136, 136, 136);
+        margin-top: 0.714rem;
+        padding-bottom: 0.143rem;
+        white-space: normal;
+      }
+      #write .footnote-line {
+        white-space: pre-wrap;
+      }
+      @media print {
+        body,
+        html {
+          border: 1px solid transparent;
+          height: 99%;
+          break-after: avoid;
+          break-before: avoid;
+          font-variant-ligatures: no-common-ligatures;
+        }
+        #write {
+          margin-top: 0px;
+          padding-top: 0px;
+          border-color: transparent !important;
+        }
+        .typora-export * {
+          -webkit-print-color-adjust: exact;
+        }
+        .typora-export #write {
+          break-after: avoid;
+        }
+        .typora-export #write::after {
+          height: 0px;
+        }
+        .is-mac table {
+          break-inside: avoid;
+        }
+      }
+      .footnote-line {
+        margin-top: 0.714em;
+        font-size: 0.7em;
+      }
+      a img,
+      img a {
+        cursor: pointer;
+      }
+      pre.md-meta-block {
+        font-size: 0.8rem;
+        min-height: 0.8rem;
+        white-space: pre-wrap;
+        background: rgb(204, 204, 204);
+        display: block;
+        overflow-x: hidden;
+      }
+      p > .md-image:only-child:not(.md-img-error) img,
+      p > img:only-child {
+        display: block;
+        margin: auto;
+      }
+      #write.first-line-indent p > .md-image:only-child:not(.md-img-error) img {
+        left: -2em;
+        position: relative;
+      }
+      p > .md-image:only-child {
+        display: inline-block;
+        width: 100%;
+      }
+      #write .MathJax_Display {
+        margin: 0.8em 0px 0px;
+      }
+      .md-math-block {
+        width: 100%;
+      }
+      .md-math-block:not(:empty)::after {
+        display: none;
+      }
+      .MathJax_ref {
+        fill: currentcolor;
+      }
+      [contenteditable='true']:active,
+      [contenteditable='true']:focus,
+      [contenteditable='false']:active,
+      [contenteditable='false']:focus {
+        outline: 0px;
+        box-shadow: none;
+      }
+      .md-task-list-item {
+        position: relative;
+        list-style-type: none;
+      }
+      .task-list-item.md-task-list-item {
+        padding-left: 0px;
+      }
+      .md-task-list-item > input {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        margin-left: -1.2em;
+        margin-top: calc(1em - 10px);
+        border: none;
+      }
+      .math {
+        font-size: 1rem;
+      }
+      .md-toc {
+        min-height: 3.58rem;
+        position: relative;
+        font-size: 0.9rem;
+        border-radius: 10px;
+      }
+      .md-toc-content {
+        position: relative;
+        margin-left: 0px;
+      }
+      .md-toc-content::after,
+      .md-toc::after {
+        display: none;
+      }
+      .md-toc-item {
+        display: block;
+        color: rgb(65, 131, 196);
+      }
+      .md-toc-item a {
+        text-decoration: none;
+      }
+      .md-toc-inner:hover {
+        text-decoration: underline;
+      }
+      .md-toc-inner {
+        display: inline-block;
+        cursor: pointer;
+      }
+      .md-toc-h1 .md-toc-inner {
+        margin-left: 0px;
+        font-weight: 700;
+      }
+      .md-toc-h2 .md-toc-inner {
+        margin-left: 2em;
+      }
+      .md-toc-h3 .md-toc-inner {
+        margin-left: 4em;
+      }
+      .md-toc-h4 .md-toc-inner {
+        margin-left: 6em;
+      }
+      .md-toc-h5 .md-toc-inner {
+        margin-left: 8em;
+      }
+      .md-toc-h6 .md-toc-inner {
+        margin-left: 10em;
+      }
+      @media screen and (max-width: 48em) {
+        .md-toc-h3 .md-toc-inner {
+          margin-left: 3.5em;
+        }
+        .md-toc-h4 .md-toc-inner {
+          margin-left: 5em;
+        }
+        .md-toc-h5 .md-toc-inner {
+          margin-left: 6.5em;
+        }
+        .md-toc-h6 .md-toc-inner {
+          margin-left: 8em;
+        }
+      }
+      a.md-toc-inner {
+        font-size: inherit;
+        font-style: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+      }
+      .footnote-line a:not(.reversefootnote) {
+        color: inherit;
+      }
+      .md-attr {
+        display: none;
+      }
+      .md-fn-count::after {
+        content: '.';
+      }
+      code,
+      pre,
+      samp,
+      tt {
+        font-family: var(--monospace);
+      }
+      kbd {
+        margin: 0px 0.1em;
+        padding: 0.1em 0.6em;
+        font-size: 0.8em;
+        color: rgb(36, 39, 41);
+        background: rgb(255, 255, 255);
+        border: 1px solid rgb(173, 179, 185);
+        border-radius: 3px;
+        box-shadow: rgba(12, 13, 14, 0.2) 0px 1px 0px,
+          rgb(255, 255, 255) 0px 0px 0px 2px inset;
+        white-space: nowrap;
+        vertical-align: middle;
+      }
+      .md-comment {
+        color: rgb(162, 127, 3);
+        opacity: 0.8;
+        font-family: var(--monospace);
+      }
+      code {
+        text-align: left;
+        vertical-align: initial;
+      }
+      a.md-print-anchor {
+        white-space: pre !important;
+        border-width: initial !important;
+        border-style: none !important;
+        border-color: initial !important;
+        display: inline-block !important;
+        position: absolute !important;
+        width: 1px !important;
+        right: 0px !important;
+        outline: 0px !important;
+        background: 0px 0px !important;
+        text-decoration: initial !important;
+        text-shadow: initial !important;
+      }
+      .md-inline-math .MathJax_SVG .noError {
+        display: none !important;
+      }
+      .html-for-mac .inline-math-svg .MathJax_SVG {
+        vertical-align: 0.2px;
+      }
+      .md-fences-math .MathJax_SVG_Display,
+      .md-math-block .MathJax_SVG_Display {
+        text-align: center;
+        margin: 0px;
+        position: relative;
+        text-indent: 0px;
+        max-width: none;
+        max-height: none;
+        min-height: 0px;
+        min-width: 100%;
+        width: auto;
+        overflow-y: visible;
+        display: block !important;
+      }
+      .MathJax_SVG_Display,
+      .md-inline-math .MathJax_SVG_Display {
+        width: auto;
+        margin: inherit;
+        display: inline-block !important;
+      }
+      .MathJax_SVG .MJX-monospace {
+        font-family: var(--monospace);
+      }
+      .MathJax_SVG .MJX-sans-serif {
+        font-family: sans-serif;
+      }
+      .MathJax_SVG {
+        display: inline;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        text-indent: 0px;
+        text-align: left;
+        text-transform: none;
+        letter-spacing: normal;
+        word-spacing: normal;
+        overflow-wrap: normal;
+        white-space: nowrap;
+        float: none;
+        direction: ltr;
+        max-width: none;
+        max-height: none;
+        min-width: 0px;
+        min-height: 0px;
+        border: 0px;
+        padding: 0px;
+        margin: 0px;
+      }
+      .MathJax_SVG * {
+        transition: none 0s ease 0s;
+      }
+      .MathJax_SVG_Display svg {
+        vertical-align: middle !important;
+        margin-bottom: 0px !important;
+        margin-top: 0px !important;
+      }
+      .os-windows.monocolor-emoji .md-emoji {
+        font-family: 'Segoe UI Symbol', sans-serif;
+      }
+      .md-diagram-panel > svg {
+        max-width: 100%;
+      }
+      [lang='flow'] svg,
+      [lang='mermaid'] svg {
+        max-width: 100%;
+        height: auto;
+      }
+      [lang='mermaid'] .node text {
+        font-size: 1rem;
+      }
+      table tr th {
+        border-bottom: 0px;
+      }
+      video {
+        max-width: 100%;
+        display: block;
+        margin: 0px auto;
+      }
+      iframe {
+        max-width: 100%;
+        width: 100%;
+        border: none;
+      }
+      .highlight td,
+      .highlight tr {
+        border: 0px;
+      }
+      mark {
+        background: rgb(255, 255, 0);
+        color: rgb(0, 0, 0);
+      }
+      .md-html-inline .md-plain,
+      .md-html-inline strong,
+      mark .md-inline-math,
+      mark strong {
+        color: inherit;
+      }
+      .md-expand mark .md-meta {
+        opacity: 0.3 !important;
+      }
+      mark .md-meta {
+        color: rgb(0, 0, 0);
+      }
+      @media print {
+        .typora-export h1,
+        .typora-export h2,
+        .typora-export h3,
+        .typora-export h4,
+        .typora-export h5,
+        .typora-export h6 {
+          break-inside: avoid;
+        }
+      }
+      .md-diagram-panel .messageText {
+        stroke: none !important;
+      }
+      .md-diagram-panel .start-state {
+        fill: var(--node-fill);
+      }
+      .md-diagram-panel .edgeLabel rect {
+        opacity: 1 !important;
+      }
+      .md-require-zoom-fix foreignobject {
+        font-size: var(--mermaid-font-zoom);
+      }
+      .md-fences.md-fences-math {
+        font-size: 1em;
+      }
+      .md-fences-math .MathJax_SVG_Display {
+        margin-top: 8px;
+        cursor: default;
+      }
+      .md-fences-advanced:not(.md-focus) {
+        padding: 0px;
+        white-space: nowrap;
+        border: 0px;
+      }
+      .md-fences-advanced:not(.md-focus) {
+        background: inherit;
+      }
+      .typora-export-show-outline .typora-export-content {
+        max-width: 1440px;
+        margin: auto;
+        display: flex;
+        flex-direction: row;
+      }
+      .typora-export-sidebar {
+        width: 300px;
+        font-size: 0.8rem;
+        margin-top: 80px;
+        margin-right: 18px;
+      }
+      .typora-export-show-outline #write {
+        --webkit-flex: 2;
+        flex: 2 1 0%;
+      }
+      .typora-export-sidebar .outline-content {
+        position: fixed;
+        top: 0px;
+        max-height: 100%;
+        overflow: hidden auto;
+        padding-bottom: 30px;
+        padding-top: 60px;
+        width: 300px;
+      }
+      @media screen and (max-width: 1024px) {
+        .typora-export-sidebar,
+        .typora-export-sidebar .outline-content {
+          width: 240px;
+        }
+      }
+      @media screen and (max-width: 800px) {
+        .typora-export-sidebar {
+          display: none;
+        }
+      }
+      .outline-content li,
+      .outline-content ul {
+        margin-left: 0px;
+        margin-right: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+        list-style: none;
+      }
+      .outline-content ul {
+        margin-top: 0px;
+        margin-bottom: 0px;
+      }
+      .outline-content strong {
+        font-weight: 400;
+      }
+      .outline-expander {
+        width: 1rem;
+        height: 1.42857rem;
+        position: relative;
+        display: table-cell;
+        vertical-align: middle;
+        cursor: pointer;
+        padding-left: 4px;
+      }
+      .outline-expander::before {
+        content: '';
+        position: relative;
+        font-family: Ionicons;
+        display: inline-block;
+        font-size: 8px;
+        vertical-align: middle;
+      }
+      .outline-item {
+        padding-top: 3px;
+        padding-bottom: 3px;
+        cursor: pointer;
+      }
+      .outline-expander:hover::before {
+        content: '';
+      }
+      .outline-h1 > .outline-item {
+        padding-left: 0px;
+      }
+      .outline-h2 > .outline-item {
+        padding-left: 1em;
+      }
+      .outline-h3 > .outline-item {
+        padding-left: 2em;
+      }
+      .outline-h4 > .outline-item {
+        padding-left: 3em;
+      }
+      .outline-h5 > .outline-item {
+        padding-left: 4em;
+      }
+      .outline-h6 > .outline-item {
+        padding-left: 5em;
+      }
+      .outline-label {
+        cursor: pointer;
+        display: table-cell;
+        vertical-align: middle;
+        text-decoration: none;
+        color: inherit;
+      }
+      .outline-label:hover {
+        text-decoration: underline;
+      }
+      .outline-item:hover {
+        border-color: rgb(245, 245, 245);
+        background-color: var(--item-hover-bg-color);
+      }
+      .outline-item:hover {
+        margin-left: -28px;
+        margin-right: -28px;
+        border-left: 28px solid transparent;
+        border-right: 28px solid transparent;
+      }
+      .outline-item-single .outline-expander::before,
+      .outline-item-single .outline-expander:hover::before {
+        display: none;
+      }
+      .outline-item-open > .outline-item > .outline-expander::before {
+        content: '';
+      }
+      .outline-children {
+        display: none;
+      }
+      .info-panel-tab-wrapper {
+        display: none;
+      }
+      .outline-item-open > .outline-children {
+        display: block;
+      }
+      .typora-export .outline-item {
+        padding-top: 1px;
+        padding-bottom: 1px;
+      }
+      .typora-export .outline-item:hover {
+        margin-right: -8px;
+        border-right: 8px solid transparent;
+      }
+      .typora-export .outline-expander::before {
+        content: '+';
+        font-family: inherit;
+        top: -1px;
+      }
+      .typora-export .outline-expander:hover::before,
+      .typora-export
+        .outline-item-open
+        > .outline-item
+        > .outline-expander::before {
+        content: '−';
+      }
+      .typora-export-collapse-outline .outline-children {
+        display: none;
+      }
+      .typora-export-collapse-outline .outline-item-open > .outline-children,
+      .typora-export-no-collapse-outline .outline-children {
+        display: block;
+      }
+      .typora-export-no-collapse-outline .outline-expander::before {
+        content: '' !important;
+      }
+      .typora-export-show-outline
+        .outline-item-active
+        > .outline-item
+        .outline-label {
+        font-weight: 700;
+      }
+
+      .CodeMirror {
+        height: auto;
+      }
+      .CodeMirror.cm-s-inner {
+        background: inherit;
+      }
+      .CodeMirror-scroll {
+        overflow: auto hidden;
+        z-index: 3;
+      }
+      .CodeMirror-gutter-filler,
+      .CodeMirror-scrollbar-filler {
+        background-color: rgb(255, 255, 255);
+      }
+      .CodeMirror-gutters {
+        border-right: 1px solid rgb(221, 221, 221);
+        background: inherit;
+        white-space: nowrap;
+      }
+      .CodeMirror-linenumber {
+        padding: 0px 3px 0px 5px;
+        text-align: right;
+        color: rgb(153, 153, 153);
+      }
+      .cm-s-inner .cm-keyword {
+        color: rgb(119, 0, 136);
+      }
+      .cm-s-inner .cm-atom,
+      .cm-s-inner.cm-atom {
+        color: rgb(34, 17, 153);
+      }
+      .cm-s-inner .cm-number {
+        color: rgb(17, 102, 68);
+      }
+      .cm-s-inner .cm-def {
+        color: rgb(0, 0, 255);
+      }
+      .cm-s-inner .cm-variable {
+        color: rgb(0, 0, 0);
+      }
+      .cm-s-inner .cm-variable-2 {
+        color: rgb(0, 85, 170);
+      }
+      .cm-s-inner .cm-variable-3 {
+        color: rgb(0, 136, 85);
+      }
+      .cm-s-inner .cm-string {
+        color: rgb(170, 17, 17);
+      }
+      .cm-s-inner .cm-property {
+        color: rgb(0, 0, 0);
+      }
+      .cm-s-inner .cm-operator {
+        color: rgb(152, 26, 26);
+      }
+      .cm-s-inner .cm-comment,
+      .cm-s-inner.cm-comment {
+        color: rgb(170, 85, 0);
+      }
+      .cm-s-inner .cm-string-2 {
+        color: rgb(255, 85, 0);
+      }
+      .cm-s-inner .cm-meta {
+        color: rgb(85, 85, 85);
+      }
+      .cm-s-inner .cm-qualifier {
+        color: rgb(85, 85, 85);
+      }
+      .cm-s-inner .cm-builtin {
+        color: rgb(51, 0, 170);
+      }
+      .cm-s-inner .cm-bracket {
+        color: rgb(153, 153, 119);
+      }
+      .cm-s-inner .cm-tag {
+        color: rgb(17, 119, 0);
+      }
+      .cm-s-inner .cm-attribute {
+        color: rgb(0, 0, 204);
+      }
+      .cm-s-inner .cm-header,
+      .cm-s-inner.cm-header {
+        color: rgb(0, 0, 255);
+      }
+      .cm-s-inner .cm-quote,
+      .cm-s-inner.cm-quote {
+        color: rgb(0, 153, 0);
+      }
+      .cm-s-inner .cm-hr,
+      .cm-s-inner.cm-hr {
+        color: rgb(153, 153, 153);
+      }
+      .cm-s-inner .cm-link,
+      .cm-s-inner.cm-link {
+        color: rgb(0, 0, 204);
+      }
+      .cm-negative {
+        color: rgb(221, 68, 68);
+      }
+      .cm-positive {
+        color: rgb(34, 153, 34);
+      }
+      .cm-header,
+      .cm-strong {
+        font-weight: 700;
+      }
+      .cm-del {
+        text-decoration: line-through;
+      }
+      .cm-em {
+        font-style: italic;
+      }
+      .cm-link {
+        text-decoration: underline;
+      }
+      .cm-error {
+        color: red;
+      }
+      .cm-invalidchar {
+        color: red;
+      }
+      .cm-constant {
+        color: rgb(38, 139, 210);
+      }
+      .cm-defined {
+        color: rgb(181, 137, 0);
+      }
+      div.CodeMirror span.CodeMirror-matchingbracket {
+        color: rgb(0, 255, 0);
+      }
+      div.CodeMirror span.CodeMirror-nonmatchingbracket {
+        color: rgb(255, 34, 34);
+      }
+      .cm-s-inner .CodeMirror-activeline-background {
+        background: inherit;
+      }
+      .CodeMirror {
+        position: relative;
+        overflow: hidden;
+      }
+      .CodeMirror-scroll {
+        height: 100%;
+        outline: 0px;
+        position: relative;
+        box-sizing: content-box;
+        background: inherit;
+      }
+      .CodeMirror-sizer {
+        position: relative;
+      }
+      .CodeMirror-gutter-filler,
+      .CodeMirror-hscrollbar,
+      .CodeMirror-scrollbar-filler,
+      .CodeMirror-vscrollbar {
+        position: absolute;
+        z-index: 6;
+        display: none;
+      }
+      .CodeMirror-vscrollbar {
+        right: 0px;
+        top: 0px;
+        overflow: hidden;
+      }
+      .CodeMirror-hscrollbar {
+        bottom: 0px;
+        left: 0px;
+        overflow: hidden;
+      }
+      .CodeMirror-scrollbar-filler {
+        right: 0px;
+        bottom: 0px;
+      }
+      .CodeMirror-gutter-filler {
+        left: 0px;
+        bottom: 0px;
+      }
+      .CodeMirror-gutters {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        padding-bottom: 30px;
+        z-index: 3;
+      }
+      .CodeMirror-gutter {
+        white-space: normal;
+        height: 100%;
+        box-sizing: content-box;
+        padding-bottom: 30px;
+        margin-bottom: -32px;
+        display: inline-block;
+      }
+      .CodeMirror-gutter-wrapper {
+        position: absolute;
+        z-index: 4;
+        background: 0px 0px !important;
+        border: none !important;
+      }
+      .CodeMirror-gutter-background {
+        position: absolute;
+        top: 0px;
+        bottom: 0px;
+        z-index: 4;
+      }
+      .CodeMirror-gutter-elt {
+        position: absolute;
+        cursor: default;
+        z-index: 4;
+      }
+      .CodeMirror-lines {
+        cursor: text;
+      }
+      .CodeMirror pre {
+        border-radius: 0px;
+        border-width: 0px;
+        background: 0px 0px;
+        font-family: inherit;
+        font-size: inherit;
+        margin: 0px;
+        white-space: pre;
+        overflow-wrap: normal;
+        color: inherit;
+        z-index: 2;
+        position: relative;
+        overflow: visible;
+      }
+      .CodeMirror-wrap pre {
+        overflow-wrap: break-word;
+        white-space: pre-wrap;
+        word-break: normal;
+      }
+      .CodeMirror-code pre {
+        border-right: 30px solid transparent;
+        width: fit-content;
+      }
+      .CodeMirror-wrap .CodeMirror-code pre {
+        border-right: none;
+        width: auto;
+      }
+      .CodeMirror-linebackground {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+        z-index: 0;
+      }
+      .CodeMirror-linewidget {
+        position: relative;
+        z-index: 2;
+        overflow: auto;
+      }
+      .CodeMirror-wrap .CodeMirror-scroll {
+        overflow-x: hidden;
+      }
+      .CodeMirror-measure {
+        position: absolute;
+        width: 100%;
+        height: 0px;
+        overflow: hidden;
+        visibility: hidden;
+      }
+      .CodeMirror-measure pre {
+        position: static;
+      }
+      .CodeMirror div.CodeMirror-cursor {
+        position: absolute;
+        visibility: hidden;
+        border-right: none;
+        width: 0px;
+      }
+      .CodeMirror div.CodeMirror-cursor {
+        visibility: hidden;
+      }
+      .CodeMirror-focused div.CodeMirror-cursor {
+        visibility: inherit;
+      }
+      .cm-searching {
+        background: rgba(255, 255, 0, 0.4);
+      }
+      @media print {
+        .CodeMirror div.CodeMirror-cursor {
+          visibility: hidden;
+        }
+      }
+
+      :root {
+        --side-bar-bg-color: #fafafa;
+        --control-text-color: #777;
+      }
+
+      @include-when-export url(https://fonts.loli.net/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext);
+
+      /* open-sans-regular - latin-ext_latin */
+      /* open-sans-italic - latin-ext_latin */
+      /* open-sans-700 - latin-ext_latin */
+      /* open-sans-700italic - latin-ext_latin */
+      html {
+        font-size: 16px;
+      }
+
+      body {
+        font-family: 'Open Sans', 'Clear Sans', 'Helvetica Neue', Helvetica,
+          Arial, sans-serif;
+        color: rgb(51, 51, 51);
+        line-height: 1.6;
+      }
+
+      #write {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 30px;
+        padding-bottom: 100px;
+      }
+
+      @media only screen and (min-width: 1400px) {
+        #write {
+          max-width: 1024px;
+        }
+      }
+
+      @media only screen and (min-width: 1800px) {
+        #write {
+          max-width: 1200px;
+        }
+      }
+
+      #write > ul:first-child,
+      #write > ol:first-child {
+        margin-top: 30px;
+      }
+
+      a {
+        color: #4183c4;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        position: relative;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+        line-height: 1.4;
+        cursor: text;
+      }
+      h1:hover a.anchor,
+      h2:hover a.anchor,
+      h3:hover a.anchor,
+      h4:hover a.anchor,
+      h5:hover a.anchor,
+      h6:hover a.anchor {
+        text-decoration: none;
+      }
+      h1 tt,
+      h1 code {
+        font-size: inherit;
+      }
+      h2 tt,
+      h2 code {
+        font-size: inherit;
+      }
+      h3 tt,
+      h3 code {
+        font-size: inherit;
+      }
+      h4 tt,
+      h4 code {
+        font-size: inherit;
+      }
+      h5 tt,
+      h5 code {
+        font-size: inherit;
+      }
+      h6 tt,
+      h6 code {
+        font-size: inherit;
+      }
+      h1 {
+        font-size: 2.25em;
+        line-height: 1.2;
+        border-bottom: 1px solid #eee;
+      }
+      h2 {
+        font-size: 1.75em;
+        line-height: 1.225;
+        border-bottom: 1px solid #eee;
+      }
+
+      /*@media print {
+    .typora-export h1,
+    .typora-export h2 {
+        border-bottom: none;
+        padding-bottom: initial;
+    }
+
+    .typora-export h1::after,
+    .typora-export h2::after {
+        content: "";
+        display: block;
+        height: 100px;
+        margin-top: -96px;
+        border-top: 1px solid #eee;
+    }
+}*/
+
+      h3 {
+        font-size: 1.5em;
+        line-height: 1.43;
+      }
+      h4 {
+        font-size: 1.25em;
+      }
+      h5 {
+        font-size: 1em;
+      }
+      h6 {
+        font-size: 1em;
+        color: #777;
+      }
+      p,
+      blockquote,
+      ul,
+      ol,
+      dl,
+      table {
+        margin: 0.8em 0;
+      }
+      li > ol,
+      li > ul {
+        margin: 0 0;
+      }
+      hr {
+        height: 2px;
+        padding: 0;
+        margin: 16px 0;
+        background-color: #e7e7e7;
+        border: 0 none;
+        overflow: hidden;
+        box-sizing: content-box;
+      }
+
+      li p.first {
+        display: inline-block;
+      }
+      ul,
+      ol {
+        padding-left: 30px;
+      }
+      ul:first-child,
+      ol:first-child {
+        margin-top: 0;
+      }
+      ul:last-child,
+      ol:last-child {
+        margin-bottom: 0;
+      }
+      blockquote {
+        border-left: 4px solid #dfe2e5;
+        padding: 0 15px;
+        color: #777777;
+      }
+      blockquote blockquote {
+        padding-right: 0;
+      }
+      table {
+        padding: 0;
+        word-break: initial;
+      }
+      table tr {
+        border: 1px solid #dfe2e5;
+        margin: 0;
+        padding: 0;
+      }
+      table tr:nth-child(2n),
+      thead {
+        background-color: #f8f8f8;
+      }
+      table th {
+        font-weight: bold;
+        border: 1px solid #dfe2e5;
+        border-bottom: 0;
+        margin: 0;
+        padding: 6px 13px;
+      }
+      table td {
+        border: 1px solid #dfe2e5;
+        margin: 0;
+        padding: 6px 13px;
+      }
+      table th:first-child,
+      table td:first-child {
+        margin-top: 0;
+      }
+      table th:last-child,
+      table td:last-child {
+        margin-bottom: 0;
+      }
+
+      .CodeMirror-lines {
+        padding-left: 4px;
+      }
+
+      .code-tooltip {
+        box-shadow: 0 1px 1px 0 rgba(0, 28, 36, 0.3);
+        border-top: 1px solid #eef2f2;
+      }
+
+      .md-fences,
+      code,
+      tt {
+        border: 1px solid #e7eaed;
+        background-color: #f8f8f8;
+        border-radius: 3px;
+        padding: 0;
+        padding: 2px 4px 0px 4px;
+        font-size: 0.9em;
+      }
+
+      code {
+        background-color: #f3f4f4;
+        padding: 0 2px 0 2px;
+      }
+
+      .md-fences {
+        margin-bottom: 15px;
+        margin-top: 15px;
+        padding-top: 8px;
+        padding-bottom: 6px;
+      }
+
+      .md-task-list-item > input {
+        margin-left: -1.3em;
+      }
+
+      @media print {
+        html {
+          font-size: 13px;
+        }
+        table,
+        pre {
+          page-break-inside: avoid;
+        }
+        pre {
+          word-wrap: break-word;
+        }
+      }
+
+      .md-fences {
+        background-color: #f8f8f8;
+      }
+      #write pre.md-meta-block {
+        padding: 1rem;
+        font-size: 85%;
+        line-height: 1.45;
+        background-color: #f7f7f7;
+        border: 0;
+        border-radius: 3px;
+        color: #777777;
+        margin-top: 0 !important;
+      }
+
+      .mathjax-block > .code-tooltip {
+        bottom: 0.375rem;
+      }
+
+      .md-mathjax-midline {
+        background: #fafafa;
+      }
+
+      #write > h3.md-focus:before {
+        left: -1.5625rem;
+        top: 0.375rem;
+      }
+      #write > h4.md-focus:before {
+        left: -1.5625rem;
+        top: 0.285714286rem;
+      }
+      #write > h5.md-focus:before {
+        left: -1.5625rem;
+        top: 0.285714286rem;
+      }
+      #write > h6.md-focus:before {
+        left: -1.5625rem;
+        top: 0.285714286rem;
+      }
+      .md-image > .md-meta {
+        /*border: 1px solid #ddd;*/
+        border-radius: 3px;
+        padding: 2px 0px 0px 4px;
+        font-size: 0.9em;
+        color: inherit;
+      }
+
+      .md-tag {
+        color: #a7a7a7;
+        opacity: 1;
+      }
+
+      .md-toc {
+        margin-top: 20px;
+        padding-bottom: 20px;
+      }
+
+      .sidebar-tabs {
+        border-bottom: none;
+      }
+
+      #typora-quick-open {
+        border: 1px solid #ddd;
+        background-color: #f8f8f8;
+      }
+
+      #typora-quick-open-item {
+        background-color: #fafafa;
+        border-color: #fefefe #e5e5e5 #e5e5e5 #eee;
+        border-style: solid;
+        border-width: 1px;
+      }
+
+      /** focus mode */
+      .on-focus-mode blockquote {
+        border-left-color: rgba(85, 85, 85, 0.12);
+      }
+
+      header,
+      .context-menu,
+      .megamenu-content,
+      footer {
+        font-family: 'Segoe UI', 'Arial', sans-serif;
+      }
+
+      .file-node-content:hover .file-node-icon,
+      .file-node-content:hover .file-node-open-state {
+        visibility: visible;
+      }
+
+      .mac-seamless-mode #typora-sidebar {
+        background-color: #fafafa;
+        background-color: var(--side-bar-bg-color);
+      }
+
+      .md-lang {
+        color: #b4654d;
+      }
+
+      /*.html-for-mac {
+    --item-hover-bg-color: #E6F0FE;
+}*/
+
+      #md-notification .btn {
+        border: 0;
+      }
+
+      .dropdown-menu .divider {
+        border-color: #e5e5e5;
+        opacity: 0.4;
+      }
+
+      .ty-preferences .window-content {
+        background-color: #fafafa;
+      }
+
+      .ty-preferences .nav-group-item.active {
+        color: white;
+        background: #999;
+      }
+
+      .menu-item-container a.menu-style-btn {
+        background-color: #f5f8fa;
+        background-image: linear-gradient(
+          180deg,
+          hsla(0, 0%, 100%, 0.8),
+          hsla(0, 0%, 100%, 0)
+        );
+      }
+    </style>
+  </head>
+  <body class="typora-export os-windows">
+    <div class="typora-export-content">
+      <div id="write" class="">
+        <h1 id="canvas与动画"><span>canvas与动画</span></h1>
+        <h2 id="1-什么是canvas"><span>1. 什么是canvas</span></h2>
+        <ol start="">
+          <li>
+            <code>canvas</code><span> 是一个可以使用脚本(通常为 </span
+            ><code>JavaScript</code><span> 来绘制图形的 </span><code>HTML</code
+            ><span>
+              元素.例如,它可以用于绘制图表、制作图片构图或者制作简单的(以及不那么简单的)动画.</span
+            >
+          </li>
+          <li>
+            <code>&lt;canvas&gt;</code><span> 最早由Apple引入</span
+            ><code>WebKit</code><span>，用于</span><code>Mac OS X</code
+            ><span> 的 </span><code>Dashboard</code
+            ><span
+              >，随后被各个浏览器实现。如今，所有主流的浏览器都支持它。</span
+            >
+          </li>
+          <li>
+            <strong><span>Canvas API</span></strong
+            ><span> 提供了一个通过 </span><code>JavaScript</code
+            ><span> 和 </span><code>HTML</code><span> 的 </span
+            ><code>canvas</code
+            ><span>
+              元素来绘制图形的方式。它可以用于动画、游戏画面、数据可视化、图片编辑以及实时视频处理等方面。</span
+            >
+          </li>
+        </ol>
+        <h2 id="2-canvas绘制动画方式"><span>2. canvas绘制动画方式</span></h2>
+        <h3 id="21-webgl"><span>2.1. webGL</span></h3>
+        <ul>
+          <li>
+            <code>WebGL</code><span>是基于</span><code>OpenGL ES 2.0</code
+            ><span>的Web标准，可以通过</span><code>HTML5 Canvas</code
+            ><span>元素作为DOM接口访问。</span>
+          </li>
+          <li>
+            <code>WebGL</code><span>可以看做是将</span><code>OpenGL ES</code
+            ><span>（</span><code>OpenGL for Embedded Systems</code
+            ><span>，</span><code>OpenGL</code
+            ><span
+              >嵌入式版本，针对手机、游戏机等设备相对较轻量级的版本）移植到了网页平台</span
+            >
+          </li>
+        </ul>
+        <h3 id="22-threejs"><span>2.2. Three.js</span></h3>
+        <ul>
+          <li>
+            <code>Three.js</code
+            ><span
+              >封装了底层的图形接口，使得程序员能够在无需掌握繁冗的图形学知识的情况下，也能用简单的代码实现三维场景的渲染。</span
+            >
+          </li>
+          <li>
+            <span>由于</span><code>Three.js</code><span>是</span
+            ><code>WebGL</code><span>的上层封装，所以几乎所有</span
+            ><code>WebGL</code><span>支持的浏览器</span><code>Three.js</code
+            ><span>都能够支持</span>
+          </li>
+        </ul>
+        <h2 id="3-threejs实现动画关键核心内容">
+          <span>3. Three.js实现动画关键核心内容</span>
+        </h2>
+        <h3 id="31-场景-scene"><span>3.1. 场景 (scene)</span></h3>
+        <p>
+          <code>Three.js</code
+          ><span
+            >中场景的概念类似于一个无限大的容器，在场景中，所有的内容（相机、灯光、物体等）都会在其内部布局，它在程序开始的时候实例化，后续除了更新内容没有复杂操作（类似于一间房间的装修，当房子做好后，装修基本上不会对房子结构做出很大改变）</span
+          >
+        </p>
+        <h3 id="32-相机-camera"><span>3.2. 相机 (camera)</span></h3>
+        <h4 id="321-什么是照相机"><span>3.2.1. 什么是照相机</span></h4>
+        <p>
+          <span>我们使用</span><code>Three.js</code
+          ><span
+            >创建的场景是三维的，而通常情况下显示屏是二维的，那么三维的场景如何显示到二维的显示屏上呢？照相机就是这样一个抽象，它定义了三维空间到二维屏幕的投影方式，用“照相机”这样一个类比，可以使我们直观地理解这一投影方式。</span
+          >
+        </p>
+        <p>
+          <span
+            >而针对投影方式的不同，照相机又分为正交投影照相机与透视投影照相机。我们需要为自己的程序选择合适的照相机。</span
+          >
+        </p>
+        <p><img src=".\images\camera.png" referrerpolicy="no-referrer" /></p>
+        <h4 id="322-正交投影照相机"><span>3.2.2. 正交投影照相机</span></h4>
+        <p>
+          <span>正交投影照相机的视角是一个矩形，它的初始化参数分别为：</span>
+        </p>
+        <pre
+          class="md-fences md-end-block ty-contain-cm modeLoaded"
+          spellcheck="false"
+          lang="javascript"
+        ><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang="javascript"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.5px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">THREE</span>.<span class="cm-property">OrthographicCamera</span>(<span class="cm-variable">left</span>, <span class="cm-variable">right</span>, <span class="cm-variable">top</span>, <span class="cm-variable">bottom</span>, <span class="cm-variable">near</span>, <span class="cm-variable">far</span>)</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 23px;"></div><div class="CodeMirror-gutters" style="display: none; height: 23px;"></div></div></div></pre>
+        <p><span>对于这些参数，下图给出了很形象的表示</span></p>
+        <p>
+          <img src="\resource\orthCamera.jpg" referrerpolicy="no-referrer" />
+        </p>
+        <p>
+          <span
+            >上图中，灰色的部分是视景体，也就是我们通过照相机能够看到的区域，我们可以通过设置 </span
+          ><code>near</code><span> 和 </span><code>far</code
+          ><span> 控制照相机视距，而通过设置 </span><code>top</code
+          ><span> 、</span><code>bottom</code><span>、</span><code>left</code
+          ><span>、</span><code>right</code
+          ><span
+            >，来设置视野大小，在正交投影照相机中，视野的宽高比决定了看到的东西的形状（比如上下高度越大，看到的物体越矮；左右宽度越大，看到的物体越瘦），所以尽量保证宽高比与 </span
+          ><code>canvas</code><span> 相同</span>
+        </p>
+        <h4 id="323-透视投影照相机"><span>3.2.3. 透视投影照相机</span></h4>
+        <p>
+          <span
+            >透视投影照相机的视角更接近于人类的视角，它的可视区域是一个梯形，它的初始化参数为：</span
+          >
+        </p>
+        <pre
+          class="md-fences md-end-block ty-contain-cm modeLoaded"
+          spellcheck="false"
+          lang="javascript"
+        ><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang="javascript"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.5px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">THREE</span>.<span class="cm-property">PerspectiveCamera</span>(<span class="cm-variable">fov</span>, <span class="cm-variable">aspect</span>, <span class="cm-variable">near</span>, <span class="cm-variable">far</span>)</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 23px;"></div><div class="CodeMirror-gutters" style="display: none; height: 23px;"></div></div></div></pre>
+        <p><span>其视角见下图：</span></p>
+        <p>
+          <img src=".\resource\persCamera.jpg" referrerpolicy="no-referrer" />
+        </p>
+        <p>
+          <span>其中 </span><code>fov</code
+          ><span>
+            是视景体竖直方向上的张角（是角度制而非弧度制）如侧视图所示</span
+          >
+        </p>
+        <p>
+          <code>aspect</code><span>等于</span><code>width / height</code
+          ><span
+            >，是照相机水平方向和竖直方向长度的比值，通常设为Canvas的横纵比例</span
+          >
+        </p>
+        <p>
+          <span> </span><code>near</code><span> 和 </span><code>far</code
+          ><span> 分别是照相机到视景体最近、最远的距离，均为正值，且</span
+          ><code>far</code><span>应大于</span><code>near</code><span> </span>
+        </p>
+        <h3 id="32-图形geometry"><span>3.2. 图形(geometry)</span></h3>
+        <p>
+          <span>此时我们有了可看见的视角，但是此时场景内并没有物品，</span
+          ><code>Three.js</code
+          ><span>给了我们很方便的接口创建各种图形，其创建方法如下：</span>
+        </p>
+        <pre
+          class="md-fences md-end-block ty-contain-cm modeLoaded"
+          spellcheck="false"
+          lang="javascript"
+        ><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang="javascript"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.5px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">THREE</span>.<span class="cm-property">Mesh</span>(<span class="cm-variable">geometry</span>, <span class="cm-variable">material</span>)</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 23px;"></div><div class="CodeMirror-gutters" style="display: none; height: 23px;"></div></div></div></pre>
+        <p>
+          <span>其中 </span><code>geometry</code
+          ><span> 是图形类型，创建方法如下：</span>
+        </p>
+        <pre
+          class="md-fences md-end-block ty-contain-cm modeLoaded"
+          spellcheck="false"
+          lang="javascript"
+        ><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang="javascript"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.5px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">THREE</span>.<span class="cm-property">Geometry</span>(<span class="cm-variable">param</span>)</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 23px;"></div><div class="CodeMirror-gutters" style="display: none; height: 23px;"></div></div></div></pre>
+        <p>
+          <code>Three.js</code
+          ><span> 提供了多种创建图形方式，每一种图形有不同参数：</span>
+        </p>
+        <p>
+          <img src=".\resource\geometry.jpg" referrerpolicy="no-referrer" />
+        </p>
+        <p>
+          <span>具体可见 </span
+          ><a
+            href="http://www.yanhuangxueyuan.com/Three.js_course/geometry.html"
+            ><span>几何体对象(三维建模)</span></a
+          ><span> </span>
+        </p>
+        <h3 id="32-材料material"><span>3.2. 材料(material)</span></h3>
+        <p>
+          <span
+            >在上面我们介绍了创建三维图形，但创建出来后，并不能直接显示，就好像一个篮球，我们是通过篮球外皮才能知道篮球是圆的，同理我们需要用一种材料去描述形状，而</span
+          ><code>Three.js</code><span>给我们提供了多种材料：</span>
+        </p>
+        <h4 id="321-基本材质"><span>3.2.1. 基本材质</span></h4>
+        <p>
+          <span>使用基本材质（</span><code>BasicMaterial</code
+          ><span
+            >）的物体，渲染后物体的颜色始终为该材质的颜色，而不会由于光照产生明暗、阴影效果。如果没有指定材质的颜色，则颜色是随机的。其构造函数是：</span
+          >
+        </p>
+        <pre
+          class="md-fences md-end-block ty-contain-cm modeLoaded"
+          spellcheck="false"
+          lang="javascript"
+        ><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang="javascript"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.5px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">THREE</span>.<span class="cm-property">MeshBasicMaterial</span>(<span class="cm-variable">opt</span>)</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 23px;"></div><div class="CodeMirror-gutters" style="display: none; height: 23px;"></div></div></div></pre>
+        <p><span>最后显示效果如下图所示：</span></p>
+        <p>
+          <img src=".\resource\baseMaterial.png" referrerpolicy="no-referrer" />
+        </p>
+        <h4 id="322-lambert材质"><span>3.2.2. Lambert材质</span></h4>
+        <p>
+          <span>Lambert材质（</span><code>MeshLambertMaterial</code
+          ><span
+            >）是符合Lambert光照模型的材质。Lambert光照模型的主要特点是只考虑漫反射而不考虑镜面反射的效果，因而对于金属、镜子等需要镜面反射效果的物体就不适应，对于其他大部分物体的漫反射效果都是适用的。其构造函数为：</span
+          >
+        </p>
+        <pre
+          class="md-fences md-end-block ty-contain-cm modeLoaded"
+          spellcheck="false"
+          lang=""
+        ><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.5px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">THREE.MeshLambertMaterial(opt)</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 23px;"></div><div class="CodeMirror-gutters" style="display: none; height: 23px;"></div></div></div></pre>
+        <p><span>加上光照后显示效果如下图：</span></p>
+        <p>
+          <img
+            src=".\resource\lambertMaterial.png"
+            referrerpolicy="no-referrer"
+          />
+        </p>
+        <h4 id="323-phong材质"><span>3.2.3. Phong材质</span></h4>
+        <p>
+          <span>Phong材质（</span><code>MeshPhongMaterial</code
+          ><span
+            >）是符合Phong光照模型的材质。和Lambert不同的是，Phong模型考虑了镜面反射的效果，因此对于金属、镜面的表现尤为适合。其构造函数为：</span
+          >
+        </p>
+        <pre
+          class="md-fences md-end-block ty-contain-cm modeLoaded"
+          spellcheck="false"
+          lang=""
+        ><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.5px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">THREE.MeshPhongMaterial(opt)</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 23px;"></div><div class="CodeMirror-gutters" style="display: none; height: 23px;"></div></div></div></pre>
+        <p><span>加上光照后显示效果如下图：</span></p>
+        <p>
+          <img
+            src=".\resource\phoneMaterial.png"
+            referrerpolicy="no-referrer"
+          />
+        </p>
+        <h4 id="324-法相材质"><span>3.2.4. 法相材质</span></h4>
+        <p>
+          <span
+            >法向材质可以将材质的颜色设置为其法向量的方向，有时候对于调试很有帮助，法向材质的设定很简单，甚至不用设置任何参数：</span
+          >
+        </p>
+        <pre
+          class="md-fences md-end-block ty-contain-cm modeLoaded"
+          spellcheck="false"
+          lang="javascript"
+        ><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang="javascript"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.5px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-variable">THREE</span>.<span class="cm-property">MeshNormalMaterial</span>()</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 23px;"></div><div class="CodeMirror-gutters" style="display: none; height: 23px;"></div></div></div></pre>
+        <p><span>加上光照后显示效果如下图：</span></p>
+        <p>
+          <img
+            src=".\resource\normalMaterial.png"
+            referrerpolicy="no-referrer"
+          />
+        </p>
+        <h4 id="325-材质的纹理贴图"><span>3.2.5. 材质的纹理贴图</span></h4>
+        <p>
+          <span
+            >有时候，我们却希望使用图像作为材质。这时候，就需要导入图像作为纹理贴图，并添加到相应的材质中。Three.js也为我们提供了便利的方法：</span
+          >
+        </p>
+        <pre
+          class="md-fences md-end-block ty-contain-cm modeLoaded"
+          spellcheck="false"
+          lang="javascript"
+        ><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang="javascript"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 9.5px; left: 8px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">var</span> <span class="cm-def">texture</span> <span class="cm-operator">=</span> <span class="cm-variable">THREE</span>.<span class="cm-property">ImageUtils</span>.<span class="cm-property">loadTexture</span>(<span class="cm-string">'../img/0.png'</span>);</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"><span class="cm-keyword">var</span> <span class="cm-def">material</span> <span class="cm-operator">=</span> <span class="cm-keyword">new</span> <span class="cm-variable">THREE</span>.<span class="cm-property">MeshLambertMaterial</span>({</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;"> &nbsp; &nbsp;<span class="cm-property">map</span>: <span class="cm-variable">texture</span></span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">});</span></pre></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 92px;"></div><div class="CodeMirror-gutters" style="display: none; height: 92px;"></div></div></div></pre>
+        <p><span>此时我们可以看到效果：</span></p>
+        <p>
+          <img
+            src=".\resource\imageMaterial.png"
+            referrerpolicy="no-referrer"
+          />
+        </p>
+        <h3 id="33-光照"><span>3.3. 光照</span></h3>
+        <p>
+          <span
+            >我们加入了几何体后，会发现完全看不到东西，因为我们创建的世界是没有光的，神说要有光，于是 </span
+          ><code>Three.js</code><span> 给了我们创造光的工具，在</span
+          ><code>Three.js</code
+          ><span> 中，光分为四类：环境光、点光源、平行光以及聚光灯</span>
+        </p>
+        <h4 id="331-环境光"><span>3.3.1. 环境光</span></h4>
+        <p>
+          <span
+            >环境光是指场景整体的光照效果，是由于场景内若干光源的多次反射形成的亮度一致的效果，通常用来为整个场景指定一个基础亮度。因此，环境光没有明确的光源位置，在各处形成的亮度也是一致的，它类似于我们阴天的光线，没有确定光源，但是能照亮物体</span
+          >
+        </p>
+        <p>
+          <img src=".\resource\ambientLight.png" referrerpolicy="no-referrer" />
+        </p>
+        <h4 id="332-点光源"><span>3.3.2. 点光源</span></h4>
+        <p>
+          <span
+            >点光源是不计光源大小，可以看作一个点发出的光源。点光源照到不同物体表面的亮度是线性递减的，因此，离点光源距离越远的物体会显得越暗。它类似于灯泡的光，光从一个定点开始四散，灯光强度随着距离逐渐减小</span
+          >
+        </p>
+        <p>
+          <img src=".\resource\pointLight.png" referrerpolicy="no-referrer" />
+        </p>
+        <h4 id="333平行光"><span>3.3.3.平行光</span></h4>
+        <p>
+          <span
+            >平行光类似于我们感受到的太阳光，虽然太阳光一定程度上是点光源，但我们距离够远，体积够小，所以我们感受到的光照是平行的，它对于任意平行的平面，平行光照射的亮度都是相同的，而与平面所在位置无关</span
+          >
+        </p>
+        <p>
+          <img
+            src=".\resource\directionalLight.png"
+            referrerpolicy="no-referrer"
+          />
+        </p>
+        <h4 id="332-聚光灯"><span>3.3.2. 聚光灯</span></h4>
+        <p>
+          <span
+            >聚光灯是一种特殊的点光源，它能够朝着一个方向投射光线。聚光灯投射出的是类似圆锥形的光线，这与我们现实中看到的聚光灯是一致的</span
+          >
+        </p>
+        <p>
+          <img src=".\resource\spotLight.jpg" referrerpolicy="no-referrer" />
+        </p>
+        <h2 id="4-three缺点"><span>4. Three缺点</span></h2>
+        <p><span>开发便利的它，有着很多的优点例如支持TS，面向对象等</span></p>
+        <p>
+          <span
+            >但在它为我们开发带来便利的同时，它也存在着一些不方便的地方：</span
+          >
+        </p>
+        <ul>
+          <li><span>中文文档过少，没有比较官方的文档</span></li>
+          <li>
+            <span>如果需要使用</span><code>Three.js</code
+            ><span
+              >做动画，需要一定的数学功底，因为动画的制作一定会涉及到坐标的计算</span
+            >
+          </li>
+          <li>
+            <code>Three.js</code
+            ><span
+              >没有提供强大的引擎能力，所以复杂的动画需要加载渲染很久，体验不是很好</span
+            >
+          </li>
+        </ul>
+        <h2 id="5-参考文档"><span>5. 参考文档</span></h2>
+        <p>
+          <a href="https://www.ituring.com.cn/book/1272"
+            ><span>Three.js入门指南</span></a
+          ><span> </span
+          ><a
+            href="https://www.ituring.com.cn/book/miniarticle/58552"
+            target="_blank"
+            class="url"
+            >https://www.ituring.com.cn/book/miniarticle/58552</a
+          >
+        </p>
+        <p>
+          <a href="http://www.yanhuangxueyuan.com/Three.js_course.html"
+            ><span>Three.js视频教程</span></a
+          ><span> </span
+          ><a
+            href="http://www.yanhuangxueyuan.com/Three.js_course.html"
+            target="_blank"
+            class="url"
+            >http://www.yanhuangxueyuan.com/Three.js_course.html</a
+          >
+        </p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+      </div>
+    </div>
+  </body>
+</html>
